@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}{{ match.home_team }} vs {{ match.away_team }}{% endblock %}
+{% block content %}
+<a href="/admin/matches" class="text-muted text-decoration-none">← กลับ</a>
+<h4 class="mt-2 mb-1">⚽ {{ match.home_team }} vs {{ match.away_team }}</h4>
+<p class="text-muted mb-4">{{ match.stage }} | {{ match.kickoff_time.strftime('%d/%m/%Y %H:%M') }} น.</p>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card text-center">
+      <div class="text-muted small">สกอร์จริง</div>
+      <div class="number">
+        {% if match.home_score is not none %}{{ match.home_score }}-{{ match.away_score }}
+        {% else %}รอผล{% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card text-center">
+      <div class="text-muted small">ผู้ทายทั้งหมด</div>
+      <div class="number">{{ predictions|length }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card text-center">
+      <div class="text-muted small">ทายถูกเป๊ะ</div>
+      <div class="number text-success">{{ predictions|selectattr('pred.points_earned', 'equalto', 5)|list|length }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card text-center">
+      <div class="text-muted small">ถูกผู้ชนะ</div>
+      <div class="number text-primary">{{ predictions|selectattr('pred.points_earned', 'ge', 1)|list|length }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">การทายของผู้เล่น</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead><tr><th>ผู้เล่น</th><th>ทายสกอร์</th><th>แต้ม</th><th>ผล</th></tr></thead>
+      <tbody>
+        {% for item in predictions %}
+        <tr>
+          <td><a href="/admin/players/{{ item.user.id }}" class="text-warning text-decoration-none">{{ item.user.nickname }}</a></td>
+          <td class="fw-bold text-warning">{{ item.pred.predicted_home_score }}-{{ item.pred.predicted_away_score }}</td>
+          <td>
+            {% if item.pred.points_earned is not none %}
+              <strong class="text-warning">{{ item.pred.points_earned }}</strong>
+            {% else %}<span class="text-muted">—</span>{% endif %}
+          </td>
+          <td>
+            {% if item.pred.points_earned == 5 %}<span class="badge bg-success">🎯 ถูกเป๊ะ</span>
+            {% elif item.pred.points_earned == 3 %}<span class="badge bg-primary">✅ ถูก+ผลต่าง</span>
+            {% elif item.pred.points_earned == 1 %}<span class="badge bg-secondary">👍 ถูกผู้ชนะ</span>
+            {% elif item.pred.points_earned == 0 %}<span class="badge bg-danger">❌ ผิด</span>
+            {% else %}<span class="badge bg-dark">รอผล</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

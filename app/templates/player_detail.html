@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}{{ player.nickname }}{% endblock %}
+{% block content %}
+<a href="/admin/players" class="text-muted text-decoration-none">← กลับ</a>
+<h4 class="mt-2 mb-4">🎯 การทายของ {{ player.nickname }}</h4>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">คะแนนรวม</div>
+      <div class="number">{{ player.total_score }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">ทายทั้งหมด</div>
+      <div class="number">{{ predictions|length }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">Line</div>
+      <div class="small mt-1">{{ player.line_contact or '—' }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">โทร</div>
+      <div class="small mt-1">{{ player.phone or '—' }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">รายละเอียดการทาย</div>
+  <div class="card-body p-0">
+    <table class="table mb-0">
+      <thead>
+        <tr>
+          <th>แมตช์</th>
+          <th>รอบ</th>
+          <th>ทายสกอร์</th>
+          <th>ผลจริง</th>
+          <th>แต้ม</th>
+          <th>ผล</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in predictions %}
+        <tr>
+          <td>
+            <strong>{{ item.match.home_team }}</strong>
+            <span class="text-muted"> vs </span>
+            <strong>{{ item.match.away_team }}</strong>
+          </td>
+          <td class="text-muted small">{{ item.match.stage }}</td>
+          <td class="text-warning fw-bold">{{ item.pred.predicted_home_score }}-{{ item.pred.predicted_away_score }}</td>
+          <td>
+            {% if item.match.home_score is not none %}
+              {{ item.match.home_score }}-{{ item.match.away_score }}
+            {% else %}
+              <span class="text-muted">รอผล</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if item.pred.points_earned is not none %}
+              <strong class="text-warning">{{ item.pred.points_earned }}</strong>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if item.pred.points_earned == 5 %}
+              <span class="badge bg-success">🎯 ถูกเป๊ะ</span>
+            {% elif item.pred.points_earned == 3 %}
+              <span class="badge bg-primary">✅ ถูก+ผลต่าง</span>
+            {% elif item.pred.points_earned == 1 %}
+              <span class="badge bg-secondary">👍 ถูกผู้ชนะ</span>
+            {% elif item.pred.points_earned == 0 %}
+              <span class="badge bg-danger">❌ ผิด</span>
+            {% else %}
+              <span class="badge bg-dark text-muted">รอผล</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

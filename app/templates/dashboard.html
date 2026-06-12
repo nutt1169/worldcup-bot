@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}ภาพรวม{% endblock %}
+{% block content %}
+<h4 class="mb-4">📊 ภาพรวม</h4>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">ผู้เล่นทั้งหมด</div>
+      <div class="number">{{ total_players }}</div>
+      <div class="text-muted small">คน</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">แมตช์ทั้งหมด</div>
+      <div class="number">{{ total_matches }}</div>
+      <div class="text-muted small">แมตช์</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">แมตช์จบแล้ว</div>
+      <div class="number">{{ finished_matches }}</div>
+      <div class="text-muted small">แมตช์</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="stat-card">
+      <div class="text-muted small">การทายทั้งหมด</div>
+      <div class="number">{{ total_predictions }}</div>
+      <div class="text-muted small">ครั้ง</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">🏆 Top 10 อันดับ</div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th>#</th><th>ชื่อ</th><th>แต้ม</th></tr></thead>
+          <tbody>
+            {% for u in leaderboard %}
+            <tr>
+              <td>
+                {% if loop.index == 1 %}<span class="medal-1">🥇</span>
+                {% elif loop.index == 2 %}<span class="medal-2">🥈</span>
+                {% elif loop.index == 3 %}<span class="medal-3">🥉</span>
+                {% else %}{{ loop.index }}{% endif %}
+              </td>
+              <td><a href="/admin/players/{{ u.id }}" class="text-warning text-decoration-none">{{ u.nickname }}</a></td>
+              <td><strong class="text-warning">{{ u.total_score }}</strong></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-header">📅 แมตช์ที่จะมาถึง</div>
+      <div class="card-body p-0">
+        <table class="table mb-0">
+          <thead><tr><th>แมตช์</th><th>เวลา</th></tr></thead>
+          <tbody>
+            {% for m in upcoming %}
+            <tr>
+              <td>{{ m.home_team }} vs {{ m.away_team }}</td>
+              <td class="text-muted small">{{ m.kickoff_time.strftime('%d/%m %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

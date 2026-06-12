@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Broadcast{% endblock %}
+{% block content %}
+<h4 class="mb-4">📢 ส่งข้อความหาทุกคน</h4>
+<div class="card" style="max-width: 600px;">
+  <div class="card-body">
+    {% if success %}
+    <div class="alert alert-success">✅ ส่งสำเร็จ {{ count }} คน</div>
+    {% endif %}
+    <form method="post" action="/admin/broadcast">
+      <div class="mb-3">
+        <label class="form-label">ข้อความ</label>
+        <textarea name="message" class="form-control" rows="5"
+          style="background:#0f172a;color:#e2e8f0;border-color:#334155;"
+          placeholder="เช่น: 🏆 ประกาศผลผู้ชนะ..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-gold">📤 ส่งทันที</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

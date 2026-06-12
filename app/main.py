@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 from app.database import engine, Base, SessionLocal
 from app.routers.webhook import router as webhook_router
+from app.routers.admin import router as admin_router
 from app.services.match_service import sync_matches, update_scores_and_points
 import app.models  # noqa: F401 — register models
 import logging
@@ -38,6 +39,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="WorldCup Bot", lifespan=lifespan)
 app.include_router(webhook_router)
+app.include_router(admin_router)
 
 
 @app.get("/")
