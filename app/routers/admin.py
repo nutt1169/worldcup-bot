@@ -176,6 +176,20 @@ def admin_sync(request: Request, db: Session = Depends(get_db)):
     return RedirectResponse("/admin/dashboard", status_code=302)
 
 
+# ── Reset Scores ──────────────────────────────────────────────────────────────
+
+@router.get("/reset-scores")
+def reset_scores(request: Request, db: Session = Depends(get_db)):
+    if redir := require_login(request):
+        return redir
+    # reset คะแนนทุก prediction
+    db.query(Prediction).update({"points_earned": None})
+    # reset คะแนนรวมทุก user
+    db.query(User).update({"total_score": 0})
+    db.commit()
+    return RedirectResponse("/admin/dashboard", status_code=302)
+
+
 # ── Broadcast ─────────────────────────────────────────────────────────────────
 
 @router.get("/broadcast", response_class=HTMLResponse)
