@@ -149,6 +149,22 @@ def match_detail(match_id: int, request: Request, db: Session = Depends(get_db))
     return templates.TemplateResponse("match_detail.html", {"request": request, "active": "matches", "match": match, "predictions": items})
 
 
+# ── Predictions ───────────────────────────────────────────────────────────────
+
+@router.get("/predictions", response_class=HTMLResponse)
+def predictions(request: Request, db: Session = Depends(get_db)):
+    if redir := require_login(request):
+        return redir
+    preds = db.query(Prediction).order_by(Prediction.submitted_at.desc()).all()
+    items = []
+    for p in preds:
+        user = db.query(User).filter(User.id == p.user_id).first()
+        match = db.query(Match).filter(Match.id == p.match_id).first()
+        if user and match:
+            items.append({"pred": p, "user": user, "match": match})
+    return templates.TemplateResponse("predictions.html", {"request": request, "active": "predictions", "predictions": items})
+
+
 # ── Sync ──────────────────────────────────────────────────────────────────────
 
 @router.get("/sync")
